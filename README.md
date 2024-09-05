@@ -8,6 +8,11 @@ directory (unless they are a base directory used by other Kustomize directories)
 
 Check the README in each dir to see if deploying those manifests will require secrets to be set or any other set up.
 
+## Apply Order
+
+First apply `live/global/*`, then create any infrastructure in that namespace (see infra_tg_management), and then apply
+the manifests of any apps or other services that are required.
+
 ## Cookbook
 
 ### Creating secrets
