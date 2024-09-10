@@ -19,6 +19,7 @@ spec:
         app: mlflow
     spec:
       restartPolicy: Always
+      serviceAccountName: mlflow
       containers:
       - name: mlflow
         image: "ghcr.io/mlflow/mlflow:v2.15.1"
@@ -28,7 +29,7 @@ spec:
         command: [ "/bin/sh" ]
         args:
         - "-c"
-        - "pip install --quiet psycopg2-binary &&
+        - "pip install --quiet psycopg2-binary boto3 &&
           mlflow ui
           --host 0.0.0.0
           --port 5000
@@ -36,7 +37,7 @@ spec:
           --backend-store-uri $(BACKEND_STORE_URI)
           --serve-artifacts
           --default-artifact-root mlflow-artifacts:/
-          --artifacts-destination s3://$(MLFLOW_ARTIFACTS_BUCKET_NAME)"
+          --artifacts-destination s3://$(MLFLOW_BUCKET_NAME)"
         resources:
           requests:
             cpu: "0.5"
