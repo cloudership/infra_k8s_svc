@@ -5,8 +5,7 @@
 ### Tracking Server
 
 The tracking server uses the RDBMS configured through IaC and expects secrets `DB_HOSTNAME` and `DB_PORT` in the
-`iac-config` ConfigMap. The database itself must be separately created along with a user to access it. These details
-must be added to a Kubernetes secret called `mlflow` with keys `DB_USER`, `DB_PASSWORD`, and `DB_NAME`.
+`iac-config` ConfigMap. The database details must match those in 10-secret.crypt.yaml
 
 Check the top-level README for how to manage k8s secrets.
 

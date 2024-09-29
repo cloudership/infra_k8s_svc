@@ -8,10 +8,10 @@ directory (unless they are a base directory used by other Kustomize directories)
 
 Check the README in each dir to see if deploying those manifests will require secrets to be set or any other set up.
 
-## Apply Order
+## Usage
 
-First apply `live/global/*`, then create any infrastructure in that namespace (see infra_tg_management), and then apply
-the manifests of any apps or other services that are required.
+git-crypt is used for sensitive files; the symmetric key is in 1Password. Suffix the name with `.crypt.yaml` to have
+git-crypt manage it.
 
 ## Cookbook
 
@@ -54,6 +54,9 @@ kubectl edit secrets/name-of-secret
 ```
 
 An editor appears. Add it to the list of secrets - remember to use the base64-encoded value obtained above.
+
+> [!NOTE]
+> It's preferable to add the secret to the repo and encrypt it with git-crypt
 
 ### Deploy a new version of an application managed by Kustomize
 
