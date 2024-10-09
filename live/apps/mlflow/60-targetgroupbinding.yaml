@@ -1,0 +1,19 @@
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: mlflow
+  namespace: apps
+spec:
+  ipAddressType: ipv4
+  networking:
+    ingress:
+      - from:
+          - securityGroup:
+              groupID: sg-037f38a79ceeeacb0
+        ports:
+          - port: 5000
+            protocol: TCP
+  serviceRef:
+    name: mlflow
+    port: 5000
+  targetGroupARN: arn:aws:elasticloadbalancing:eu-north-1:381492273274:targetgroup/mlflow/1ffb176d3702a2bd

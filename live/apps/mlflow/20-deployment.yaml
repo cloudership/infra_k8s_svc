@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+  namespace: apps
+  labels:
+    app: mlflow
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      annotations:
+        Component: k8s_svc
+      labels:
+        app: mlflow
+    spec:
+      restartPolicy: Always
+      serviceAccountName: mlflow
+      containers:
+      - name: mlflow
+        image: "ghcr.io/mlflow/mlflow:v2.16.2"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        command: [ "/bin/sh" ]
+        args:
+        - "-c"
+        - "pip install --quiet psycopg2-binary boto3 &&
+          mlflow ui
+          --host 0.0.0.0
+          --port 5000
+          --workers 1
+          --backend-store-uri $(BACKEND_STORE_URI)
+          --serve-artifacts
+          --default-artifact-root mlflow-artifacts:/
+          --artifacts-destination s3://$(MLFLOW_BUCKET_NAME)"
+        resources:
+          requests:
+            cpu: "0.5"
+            memory: "512Mi"
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+        envFrom:
+        - secretRef:
+            name: "mlflow"
+        - configMapRef:
+            name: "iac-config"
+        env:
+        - name: "DB_HOSTNAME"
+          valueFrom:
+            configMapKeyRef:
+              name: "iac-config"
+              key: "DB_HOSTNAME"
+        - name: "DB_PORT"
+          valueFrom:
+            configMapKeyRef:
+              name: "iac-config"
+              key: "DB_PORT"
+        - name: "BACKEND_STORE_URI"
+          value: "postgresql+psycopg2://$(DB_USER):$(DB_PASSWORD)@$(DB_HOSTNAME):$(DB_PORT)/$(DB_NAME)"
