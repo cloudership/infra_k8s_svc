@@ -1,0 +1,74 @@
+---
+postgresql:
+  enabled: false
+
+pgbouncer:
+  enabled: true
+
+statsd:
+  enabled: false
+
+redis:
+  enabled: false
+
+webserver:
+  # Bump up all probe times, especially initial delay, as Fargate pods take a while to start up and cycle.
+  livenessProbe:
+    initialDelaySeconds: 120
+    timeoutSeconds: 60
+    failureThreshold: 5
+    periodSeconds: 30
+    scheme: HTTP
+
+  readinessProbe:
+    initialDelaySeconds: 120
+    timeoutSeconds: 60
+    failureThreshold: 5
+    periodSeconds: 30
+    scheme: HTTP
+
+  # Wait for at most 5 minutes (6*30s) for the webserver container to startup.
+  # livenessProbe kicks in after the first successful startupProbe
+  startupProbe:
+    timeoutSeconds: 20
+    failureThreshold: 6
+    periodSeconds: 30
+    scheme: HTTP
+
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: "1.75Gi"
+    requests:
+      cpu: "0.5"
+      memory: "1.75Gi"
+
+scheduler:
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: "1.75Gi"
+    requests:
+      cpu: "0.5"
+      memory: "1.75Gi"
+
+logs:
+  persistence:
+    enabled: false
+
+workers:
+  persistence:
+    enabled: false
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 20
+    failureThreshold: 6
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: "1.75Gi"
+    requests:
+      cpu: "0.5"
+      memory: "1.75Gi"

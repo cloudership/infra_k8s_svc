@@ -1,0 +1,19 @@
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: airflow
+  namespace: airflow
+spec:
+  ipAddressType: ipv4
+  networking:
+    ingress:
+      - from:
+          - securityGroup:
+              groupID: sg-037f38a79ceeeacb0
+        ports:
+          - port: 8080
+            protocol: TCP
+  serviceRef:
+    name: airflow-webserver
+    port: 8080
+  targetGroupARN: 'arn:aws:elasticloadbalancing:eu-north-1:381492273274:targetgroup/airflow/8778ecd79b07863c'
