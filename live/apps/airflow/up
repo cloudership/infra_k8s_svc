@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+helm upgrade --install airflow ./airflow-1.15.0.tgz --namespace airflow --create-namespace --values values.yaml --values values.crypt.yaml
+kubectl apply -f 60-targetgroupbinding.yaml
+kubectl apply -f 10-gitsync-secret.crypt.yaml
