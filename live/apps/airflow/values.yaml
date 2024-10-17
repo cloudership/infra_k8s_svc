@@ -1,4 +1,12 @@
 ---
+config:
+  webserver:
+    expose_config: "True"
+  logging:
+    remote_logging: "True"
+    remote_base_log_folder: "cloudwatch://arn:aws:logs:eu-north-1:381492273274:log-group:/showcase/prod/airflow/service"
+    remote_log_conn_id: "" # Use IAM role policy attached to the pod
+
 postgresql:
   enabled: false
 
@@ -12,6 +20,10 @@ redis:
   enabled: false
 
 webserver:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::381492273274:role/ShowcaseAirflow"
+
   # Bump up all probe times, especially initial delay, as Fargate pods take a while to start up and cycle.
   livenessProbe:
     initialDelaySeconds: 120
@@ -43,14 +55,38 @@ webserver:
       cpu: "0.75"
       memory: "1.75Gi"
 
+triggerer:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::381492273274:role/ShowcaseAirflow"
+
+dagProcessor:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::381492273274:role/ShowcaseAirflow"
+
+cleanup:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::381492273274:role/ShowcaseAirflow"
+
+migrateDatabaseJob:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::381492273274:role/ShowcaseAirflow"
+
 scheduler:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::381492273274:role/ShowcaseAirflow"
+
   resources:
     limits:
       cpu: "0.5"
-      memory: "1.75Gi"
+      memory: "1.5Gi"
     requests:
       cpu: "0.5"
-      memory: "1.75Gi"
+      memory: "1.5Gi"
 
 logs:
   persistence:
@@ -59,6 +95,11 @@ logs:
 workers:
   persistence:
     enabled: false
+
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::381492273274:role/ShowcaseAirflow"
+
   livenessProbe:
     enabled: true
     initialDelaySeconds: 120
@@ -67,11 +108,11 @@ workers:
     failureThreshold: 6
   resources:
     limits:
-      cpu: "0.75"
-      memory: "1.75Gi"
+      cpu: "1"
+      memory: "3.5Gi"
     requests:
-      cpu: "0.75"
-      memory: "1.75Gi"
+      cpu: "1"
+      memory: "3.5Gi"
 
 dags:
   persistence:
