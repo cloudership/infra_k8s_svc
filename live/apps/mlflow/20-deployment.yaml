@@ -51,15 +51,5 @@ spec:
         - configMapRef:
             name: "iac-config"
         env:
-        - name: "DB_HOSTNAME"
-          valueFrom:
-            configMapKeyRef:
-              name: "iac-config"
-              key: "DB_HOSTNAME"
-        - name: "DB_PORT"
-          valueFrom:
-            configMapKeyRef:
-              name: "iac-config"
-              key: "DB_PORT"
         - name: "BACKEND_STORE_URI"
-          value: "postgresql+psycopg2://$(DB_USER):$(DB_PASSWORD)@$(DB_HOSTNAME):$(DB_PORT)/$(DB_NAME)"
+          value: "postgresql+psycopg2://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
